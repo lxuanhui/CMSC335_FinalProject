@@ -24,7 +24,6 @@ const IP = require('ip');
 
 
 
-
 async function main() {
   try {
         await client.connect();
@@ -40,6 +39,11 @@ async function main() {
 
         app.get('/login', (request, response) => {
           response.render('login', {});
+        });
+
+        app.get('/match', (request, response) => {
+          const variables = {matchName: "Bob", matchTel: 12345678, matchEmail:"bob@bob.com", matchTable:"table"}
+          response.render('match', variables)
         });
 
         app.post('/createUser', async (request, response) => {
