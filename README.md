@@ -10,6 +10,7 @@ Enjoy!
 Team Members:
 Brian Hopkins (brianhop)
 Hayley Seungjoo Lee (shley)
+Sean Lee ()
 
 ## API Used:
 https://love-calculator.p.rapidapi.com/getPercentage
