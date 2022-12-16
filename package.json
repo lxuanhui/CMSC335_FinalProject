@@ -21,5 +21,13 @@
   "devDependencies": {
     "nodemon": "^2.0.20"
   },
-  "description": ""
+  "description": "Team Members: Brian Hopkins (brianhop)",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/lxuanhui/CMSC335_FinalProject.git"
+  },
+  "bugs": {
+    "url": "https://github.com/lxuanhui/CMSC335_FinalProject/issues"
+  },
+  "homepage": "https://github.com/lxuanhui/CMSC335_FinalProject#readme"
 }
