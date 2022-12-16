@@ -11,6 +11,7 @@
     <p>Logged in as <%- name %> ---- <a href="index">Log Out</a></p>
 	<form action="http://localhost:3000/match" method="get">
         <input type="submit" value="Start Matching">
+        <input type="hidden" value=<%- id %> name="id">
 	</form>
 </body>
 
