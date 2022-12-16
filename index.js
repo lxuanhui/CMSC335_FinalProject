@@ -14,7 +14,7 @@ const dbName = "CMSC335_DB";
 const collectionName= "finalProject";
 const userName = process.env.MONGO_DB_USERNAME;
 const password = process.env.MONGO_DB_PASSWORD;
-const { MongoClient, ServerApiVersion } = require('mongodb');
+const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 const uri = `mongodb+srv://${userName}:${password}@cluster0.iyxr6ed.mongodb.net/?retryWrites=true&w=majority`;
 const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true, serverApi: ServerApiVersion.v1 });
 
@@ -58,14 +58,16 @@ async function main() {
           try {
             await client.connect();
             await client.db(dbName).collection(collectionName).insertOne(user);
+            const retrievedUser = await client.db(dbName).collection(collectionName).findOne(user);
             let variables = {
               name: userName,
-              email: userEmail
+              id: retrievedUser._id
             }
             response.render('userPage', variables);
-            await client.close();
           } catch (e) {
             console.error(e);
+          } finally {
+            await client.close();
           }
         });
 
@@ -79,15 +81,30 @@ async function main() {
             if (retrievedUser) {
               let variables = {
                 name: retrievedUser.name,
-                email: retrievedUser.email,
+                id: retrievedUser._id
               }
               response.render('userPage', variables);
             } else {
               response.render('userNotFound', {});
             }
-            await client.close();
           } catch (e) {
             console.error(e);
+          } finally {
+            await client.close();
+          }
+        });
+
+        app.get('/match', async (request, response) => {
+          let userID = request.query.id;
+          console.log(userID);
+          try {
+            await client.connect();
+            const retrievedUser = await client.db(dbName).collection(collectionName).findOne({"_id" : ObjectId(userID)});
+            console.log(retrievedUser);
+          } catch (e) {
+            console.error(e);
+          } finally {
+            await client.close();
           }
         });
 
