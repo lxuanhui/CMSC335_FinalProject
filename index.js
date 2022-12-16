@@ -158,7 +158,7 @@ async function main() {
               console.log(error);
             }
         });
-        // IP Geo location API
+        /* IP Geo location API
         app.get('/locationData', async (request, response) => {
           try {
             // insert mongoDB function to retrieve match's name - sname and fname
@@ -181,6 +181,7 @@ async function main() {
             //console.log(error);
           }
       });
+      */
         
         // Middleware - if link not found (Error code 404) this middleware runs
         app.use((request, response) => {
