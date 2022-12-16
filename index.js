@@ -41,11 +41,6 @@ async function main() {
           response.render('login', {});
         });
 
-        app.get('/match', (request, response) => {
-          const variables = {matchName: "Bob", matchTel: 12345678, matchEmail:"bob@bob.com", matchTable:"table"}
-          response.render('match', variables)
-        });
-
         app.post('/createUser', async (request, response) => {
           const userName = request.body.name;
           const userEmail = request.body.email;
