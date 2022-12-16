@@ -8,7 +8,7 @@ app.use(bodyParser.urlencoded({extended:false}));
 app.set("view engine", "ejs");
 
 require("dotenv").config({ path: path.resolve(__dirname, 'credentials/.env') })  
-const port = process.argv[2] || 3000;
+const port = 3000;
 app.set("views", path.resolve(__dirname, "views"));
 const dbName = "CMSC335_DB";
 const collectionName= "finalProject";
@@ -32,6 +32,63 @@ async function main() {
 
         app.get('/', (request, response) => {
             response.render('index', {});
+        });
+
+        app.get('/signUp', (request, response) => {
+          response.render('signUp', {});
+        });
+
+        app.get('/login', (request, response) => {
+          response.render('login', {});
+        });
+
+        app.post('/createUser', async (request, response) => {
+          const userName = request.body.name;
+          const userEmail = request.body.email;
+          const userPhone = request.body.phone;
+          const userGender = request.body.gender;
+          const userAge = request.body.age;
+          let userInterests = request.body.interests;
+          let str = userInterests.replace(/[\r]/gm, '');
+          str = str.replace(/[\n]/gm, ',');
+          str = str.toLowerCase();
+          const interestsArray = str.split(',');
+
+          let user = {name: userName, email: userEmail, phone: userPhone, gender: userGender, age: userAge, interests: interestsArray};
+          try {
+            await client.connect();
+            await client.db(dbName).collection(collectionName).insertOne(user);
+            let variables = {
+              name: userName,
+              email: userEmail
+            }
+            response.render('userPage', variables);
+            await client.close();
+          } catch (e) {
+            console.error(e);
+          }
+        });
+
+        app.post('/userPage', async (request, response) => {
+          const userEmail = request.body.email;
+          let filter = {email: userEmail};
+
+          try {
+            await client.connect();
+            const retrievedUser = await client.db(dbName).collection(collectionName).findOne(filter);
+            if (retrievedUser) {
+              let variables = {
+                name: retrievedUser.name,
+                email: retrievedUser.email,
+              }
+              response.render('userPage', variables);
+            } else {
+              response.render('userNotFound', {});
+            }
+            await client.close();
+          } catch (e) {
+            console.error(e);
+          }
         });
 
         // For the love calculator API
