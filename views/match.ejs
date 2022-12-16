@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Scuffed Tinder</title>
+    <!--<link rel="stylesheet" href="style.css"/>-->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
+    <script>
+      setTimeout(() => {
+        confetti({
+          particleCount: 100,
+          spread: 70,
+          origin: { y: 0.6 },
+          disableForReducedMotion: true
+        });
+      }, 500);
+    </script>
+    <style>
+        #title {
+            color:hotpink;
+            text-decoration-style:wavy;
+            text-shadow: 2px 2px 5px pink;
+            font-family: cursive;
+        }
+
+        #title:hover{
+            color:deeppink
+        }
+    </style>
+</head>
+<body>
+    <h1 id="title" href="index">Congratulations!</h1>
+    <h2>You found your match</h2><hr>
+    <div>
+        <h2>
+            Your Match is : <%- matchName %> 
+        </h2><br>
+
+        You can reach him/her now at <%- matchTel %>
+        or <%- matchEmail %> today!<br>
+
+    </div>
+    <div>
+        <form action="http://localhost:3000/lovescore" method="get">
+            <input type="submit" value="Check Love Score">
+            <input type="hidden" value=<%- matchName %> name="lover">
+            <input type="hidden" value=<%- myname %> name="me">
+        </form>
+        <div><a href="locationData">Check How Far</a></div>
+        <div><a href="/">Return Home</a></div>
+    </div>
+
+</body>
+</html>

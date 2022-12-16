@@ -1,0 +1,11 @@
+#title {
+    color:hotpink;
+    text-decoration-style:wavy;
+    text-decoration-thickness: 12%;
+    text-shadow: 2px 2px 5px pink;
+    font-family: fantasy, cursive;
+}
+
+#title:hover{
+    color:deeppink
+}
