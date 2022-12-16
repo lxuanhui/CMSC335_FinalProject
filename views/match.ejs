@@ -43,12 +43,11 @@
 
     </div>
     <div>
-        <form action="http://localhost:3000/lovescore" method="get">
+        <form action="/lovescore" method="get">
             <input type="submit" value="Check Love Score">
             <input type="hidden" value=<%- matchName %> name="lover">
             <input type="hidden" value=<%- myname %> name="me">
         </form>
-        <div><a href="locationData">Check How Far</a></div>
         <div><a href="/">Return Home</a></div>
     </div>
 
