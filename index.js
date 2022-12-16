@@ -188,7 +188,17 @@ async function main() {
           const httpNotFoundStatusCode = 404;
           response.status(httpNotFoundStatusCode).send("Resource not found");
         });
-        app.listen(port);
+        
+
+        client.connect(err => {
+          if(err){ console.error(err); return false;}
+          // connection to mongo is successful, listen for requests
+          app.listen(port, () => {
+              console.log("listening for requests");
+          })
+        });
+
+        //app.listen(port);
         
   } catch (e) {
       console.error(e);
