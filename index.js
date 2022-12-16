@@ -60,7 +60,6 @@ async function main() {
               memEmail = "no@sorry.com";
 
             }
-            console.log(ranking.entries().next());
             const matchUser = await client.db(dbName).collection(collectionName).findOne({"_id" : ranking.entries().next().value[0]});
             console.log(matchUser);
             
@@ -207,6 +206,10 @@ async function main() {
   }
 }
 
+main().catch(console.error);
+
+/* Helper Functions */
+
 //Returns sorted interestMap [member_id:freq]
 async function createRanking(client, database, collection, cur_user) {
   //get list of members of opposite gender
@@ -238,8 +241,6 @@ async function createRanking(client, database, collection, cur_user) {
   
   return interestMap;
 }
-
-main().catch(console.error);
 
 function hasElem(arr, elem){
   return arr.some(i => i.toLowerCase()==elem.toLowerCase());
