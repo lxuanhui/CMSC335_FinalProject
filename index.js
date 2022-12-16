@@ -9,7 +9,7 @@ app.use(bodyParser.urlencoded({extended:false}));
 app.set("view engine", "ejs");
 
 require("dotenv").config({ path: path.resolve(__dirname, 'credentials/.env') })  
-const port = process.env.PORT || 3030
+const port = process.env.PORT || "https://cmsc335-project.herokuapp.com/"
 app.set("views", path.resolve(__dirname, "views"));
 const dbName = "CMSC335_DB";
 const collectionName= "finalProject";
