@@ -4,6 +4,7 @@ const path = require("path");
 const express = require('express');
 const app = express();
 const bodyParser = require("body-parser");
+
 app.use(bodyParser.urlencoded({extended:false}));
 app.set("view engine", "ejs");
 
@@ -21,6 +22,7 @@ const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology:
 // axios is the library to make HTTPS requests
 const axios = require('axios');
 const IP = require('ip');
+const { kMaxLength } = require('buffer');
 
 
 
@@ -41,6 +43,41 @@ async function main() {
           response.render('login', {});
         });
 
+        app.get('/match', async (request, response) => {
+          let userID = request.query.id;
+          let memName, memTel, memEmail;
+          console.log(userID);
+          try {
+            await client.connect();
+            const retrievedUser = await client.db(dbName).collection(collectionName).findOne({"_id" : ObjectId(userID)});
+            console.log(retrievedUser);
+
+            let ranking = await createRanking(client,dbName, collectionName,retrievedUser);
+            if (ranking.size==0){
+              //No match
+              memName = "NoOne";
+              memTel = "0000000";
+              memEmail = "no@sorry.com";
+
+            }
+            console.log(ranking.entries().next());
+            const matchUser = await client.db(dbName).collection(collectionName).findOne({"_id" : ranking.entries().next().value[0]});
+            console.log(matchUser);
+            
+            memName = matchUser.name;
+            memTel = matchUser.tel;
+            memEmail = matchUser.email;
+
+            //Send match info
+            response.render('match', {myname: retrievedUser.name, matchName:memName, matchTel: memTel, matchEmail: memEmail, matchTable:"table"});
+          } catch (e) {
+            console.error(e);
+          } finally {
+            await client.close();
+          }
+
+        });
+        
         app.post('/createUser', async (request, response) => {
           const userName = request.body.name;
           const userEmail = request.body.email;
@@ -93,30 +130,19 @@ async function main() {
           }
         });
 
-        app.get('/match', async (request, response) => {
-          let userID = request.query.id;
-          console.log(userID);
-          try {
-            await client.connect();
-            const retrievedUser = await client.db(dbName).collection(collectionName).findOne({"_id" : ObjectId(userID)});
-            console.log(retrievedUser);
-          } catch (e) {
-            console.error(e);
-          } finally {
-            await client.close();
-          }
-        });
+        
+
 
         // For the love calculator API
-        app.get('/data', async (request, response) => {
+        app.get('/lovescore', async (request, response) => {
             try {
               // insert mongoDB function to retrieve match's name - sname and fname
-              let sname = '';
-              let fname = '';
+              let sname = request.query.lover;
+              let fname = request.query.me;
               const options = {
                 method: 'GET',
                 url: 'https://love-calculator.p.rapidapi.com/getPercentage',
-                params: {sname: '', fname: ''},
+                params: {sname:sname, fname: fname},
                 headers: {
                   'X-RapidAPI-Key': '0be8987ed1mshdcb5e8905136398p153bb8jsn0d8de187532b',
                   'X-RapidAPI-Host': 'love-calculator.p.rapidapi.com'
@@ -126,6 +152,9 @@ async function main() {
               const reply = await axios.request(options);
               let data = reply.data;
               console.log(data);
+
+              response.render("lovescore", {myName:fname, matchName:sname,score:data.percentage, comment:data.result });
+
             } catch (error) {
               console.log(error);
             }
@@ -168,9 +197,43 @@ async function main() {
   }
 }
 
+//Returns sorted interestMap [member_id:freq]
+async function createRanking(client, database, collection, cur_user) {
+  //get list of members of opposite gender
+  let filter = {gender : { $ne: cur_user.gender}}
+  const cursor = client.db(database)
+  .collection(collection)
+  .find(filter);
+
+  const result = await cursor.toArray();
+
+  //Create map with member_id, frequency of matching interest)
+  let interestMap = new Map()
+  result.forEach(mem => 
+      interestMap.set(mem._id, 
+        mem.interests.reduce((cnt, it) => 
+        ((hasElem(cur_user.interests,it))? cnt+1 : cnt) ,0)));
+  
+  
+    //console.log(mem.name, freq);
+  
+  //sort by frequency
+  interestMap = new Map([...interestMap.entries()].sort((a, b) => b[1] - a[1]));
+
+  //debugging:
+  console.log("CHECK algo")
+  for (const v of interestMap.entries()){
+    console.log(v);
+  }
+  
+  return interestMap;
+}
+
 main().catch(console.error);
 
-
+function hasElem(arr, elem){
+  return arr.some(i => i.toLowerCase()==elem.toLowerCase());
+}
 
 
 

@@ -1,5 +1,5 @@
 {
-  "name": "summercamp",
+  "name": "UMDTinder",
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
@@ -21,7 +21,7 @@
   "devDependencies": {
     "nodemon": "^2.0.20"
   },
-  "description": "Team Members: Brian Hopkins (brianhop)",
+  "description": "Team Members: Brian Hopkins (brianhop) Hayley Seungjoo Lee (shley)",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/lxuanhui/CMSC335_FinalProject.git"
